@@ -42,7 +42,10 @@ bot.g_id = 701347683591389185
 class Bot(Snake):
     def __init__(self):
         super().__init__(
-            intents=Intents.ALL, sync_interactions=True, asyncio_debug=True
+            intents=Intents.ALL,
+            sync_interactions=True,
+            asyncio_debug=True,
+            activity="Powered by sneks",
         )
 
     @listen()

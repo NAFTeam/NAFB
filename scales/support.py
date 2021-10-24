@@ -22,6 +22,7 @@ class Support(Scale):
                         style=ButtonStyles.BLURPLE,
                         label="Create Support Thread",
                         custom_id="create_support_thread",
+                        emoji="❔",
                     )
                 ],
             )

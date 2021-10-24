@@ -202,16 +202,14 @@ class TicTacToe(Scale):
             if not determine_win_state(_board, GameState.player):
                 possible_positions = determine_possible_positions(_board)
                 # ai pos
-                if len(possible_positions) == 8:
-                    # initial random move
-                    pos = random.choice(possible_positions)
-                    _board[pos[0]][pos[1]] = GameState.ai
-
-                elif len(possible_positions) != 0:
+                if len(possible_positions) != 0:
                     depth = len(possible_positions)
 
                     move = await asyncio.to_thread(
-                        min_max, copy.deepcopy(_board), depth, GameState.ai
+                        min_max,
+                        copy.deepcopy(_board),
+                        min(random.choice([4, 6]), depth),
+                        GameState.ai,
                     )
                     x, y = move[0], move[1]
                     _board[x][y] = GameState.ai

@@ -32,11 +32,7 @@ from dis_snek.models.listener import listen
 
 logging.basicConfig()
 cls_log = logging.getLogger(dis_snek.const.logger_name)
-cls_log.setLevel(logging.DEBUG)
-
-bot = Snake(intents=Intents.ALL, sync_interactions=True, asyncio_debug=True)
-
-bot.g_id = 701347683591389185
+cls_log.setLevel(logging.INFO)
 
 
 class Bot(Snake):
@@ -69,6 +65,8 @@ class Bot(Snake):
 
 
 bot = Bot()
+bot.g_id = 701347683591389185
+
 
 bot.grow_scale("scales.support")
 bot.grow_scale("scales.githubMessages")

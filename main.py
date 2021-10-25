@@ -72,5 +72,6 @@ bot.grow_scale("scales.support")
 bot.grow_scale("scales.githubMessages")
 bot.grow_scale("scales.tictactoe")
 bot.grow_scale("scales.admin")
+bot.grow_scale("scales.debug")
 
 bot.start("Mzc5MzQzMzIyNTQ1NzgyNzg0.WgiY_w.1Y22HfdmBB_ctZHnHrlgGtd_nZo")

@@ -64,6 +64,20 @@ class DebugScale(Scale):
         e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
         await ctx.send(embeds=[e])
 
+    @debug_info.subcommand(
+        "cmds", sub_cmd_description="Get Information about registered commands"
+    )
+    async def app_cmd(self, ctx: InteractionContext):
+        e = Embed("Dis-Snek Application Command Information", "")
+
+        e.add_field("Local application cmds", str(len(self.bot.interactions)))
+        e.add_field("Component callbacks", str(len(self.bot._component_callbacks)))
+        e.add_field("Message commands", str(len(self.bot.commands)))
+        e.add_field("Tracked Scopes", str(len(self.bot._interaction_scopes.keys())))
+
+        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
+        await ctx.send(embeds=[e])
+
 
 def setup(bot):
     DebugScale(bot)

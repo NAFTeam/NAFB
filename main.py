@@ -32,16 +32,16 @@ from dis_snek.models.listener import listen
 
 logging.basicConfig()
 cls_log = logging.getLogger(dis_snek.const.logger_name)
-cls_log.setLevel(logging.INFO)
+cls_log.setLevel(logging.DEBUG)
 
 
 class Bot(Snake):
     def __init__(self):
         super().__init__(
             intents=Intents.ALL,
-            sync_interactions=True,
+            sync_interactions=False,
             asyncio_debug=True,
-            activity="Powered by sneks",
+            activity="with sneks",
         )
 
     @listen()

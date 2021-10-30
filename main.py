@@ -23,7 +23,7 @@ cls_log.setLevel(logging.DEBUG)
 class Bot(Snake):
     def __init__(self):
         super().__init__(
-            intents=Intents.ALL,
+            intents=Intents.DEFAULT,
             sync_interactions=False,
             asyncio_debug=True,
             activity="with sneks",

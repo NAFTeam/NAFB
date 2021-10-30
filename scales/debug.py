@@ -15,6 +15,7 @@ from dis_snek.models import (
     message_command,
     MessageContext,
     check,
+    MaterialColors,
 )
 from dis_snek.models.enums import Intents
 from dis_snek.models.scale import Scale
@@ -49,6 +50,15 @@ async def check_is_owner(ctx):
 
 
 class DebugScale(Scale):
+    def D_Embed(self, title: str) -> Embed:
+        e = Embed(
+            f"Dis-Snek Debug: {title}",
+            url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
+            color=MaterialColors.BLUE_GREY,
+        )
+        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
+        return e
+
     @slash_command(
         "debug",
         sub_cmd_name="info",
@@ -58,10 +68,7 @@ class DebugScale(Scale):
         await ctx.defer()
 
         uptime = datetime.datetime.now() - self.bot.start_time
-        e = Embed(
-            "Dis-Snek Debug Information",
-            url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
-        )
+        e = self.D_Embed("General")
         e.add_field("Operating System", platform.platform())
 
         e.add_field("Version Info", f"Dis-Snek@{__version__} | Py@{__py_version__}")
@@ -78,7 +85,6 @@ class DebugScale(Scale):
 
         e.add_field("Guilds", str(len(self.bot.guilds)))
 
-        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
         await ctx.send(embeds=[e])
 
     @debug_info.subcommand(
@@ -86,7 +92,8 @@ class DebugScale(Scale):
     )
     async def cache_info(self, ctx: InteractionContext):
         await ctx.defer()
-        e = Embed("Dis-Snek Cache Information", "")
+        e = self.D_Embed("Cache")
+        e.description = ""
         caches = [
             "channel_cache",
             "dm_channels",
@@ -106,7 +113,6 @@ class DebugScale(Scale):
             else:
                 e.description += f"\n`{cache}`: {len(val)} / ∞ (no_expire)"
 
-        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
         await ctx.send(embeds=[e])
 
     @debug_info.subcommand(
@@ -114,11 +120,7 @@ class DebugScale(Scale):
     )
     async def app_cmd(self, ctx: InteractionContext):
         await ctx.defer()
-        e = Embed(
-            "Dis-Snek Application Command Information",
-            "",
-            url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
-        )
+        e = self.D_Embed("Application-Commands")
 
         cmds = 0
         for v in self.bot.interactions.values():
@@ -142,7 +144,6 @@ class DebugScale(Scale):
             ),
         )
 
-        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
         await ctx.send(embeds=[e])
 
     @message_command("exec")

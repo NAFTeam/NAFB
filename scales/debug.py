@@ -58,7 +58,10 @@ class DebugScale(Scale):
         await ctx.defer()
 
         uptime = datetime.datetime.now() - self.bot.start_time
-        e = Embed("Dis-Snek Debug Information")
+        e = Embed(
+            "Dis-Snek Debug Information",
+            url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
+        )
         e.add_field("Operating System", platform.platform())
 
         e.add_field("Version Info", f"Dis-Snek@{__version__} | Py@{__py_version__}")
@@ -111,7 +114,11 @@ class DebugScale(Scale):
     )
     async def app_cmd(self, ctx: InteractionContext):
         await ctx.defer()
-        e = Embed("Dis-Snek Application Command Information", "")
+        e = Embed(
+            "Dis-Snek Application Command Information",
+            "",
+            url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
+        )
 
         cmds = 0
         for v in self.bot.interactions.values():

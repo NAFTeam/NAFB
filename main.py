@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import dis_snek.const
 from dis_snek.client import Snake
@@ -58,4 +59,4 @@ bot.grow_scale("scales.tictactoe")
 bot.grow_scale("scales.admin")
 bot.grow_scale("scales.debug")
 
-bot.start("Mzc5MzQzMzIyNTQ1NzgyNzg0.WgiY_w.1Y22HfdmBB_ctZHnHrlgGtd_nZo")
+bot.start((Path(__file__).parent / "token.txt").read_text().strip())

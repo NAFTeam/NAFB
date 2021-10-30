@@ -1,6 +1,7 @@
 import asyncio
 import re
 import traceback
+from pathlib import Path
 
 import github.GithubException
 from dis_snek.models.color import MaterialColors
@@ -13,7 +14,9 @@ from github import Github
 
 class GithubMessages(Scale):
     def __init__(self, bot):
-        self.git = Github("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")
+        self.git = Github(
+            (Path(__file__).parent.parent / "git_token.txt").read_text().strip()
+        )
         self.repo = self.git.get_repo("Discord-Snake-Pit/Dis-Snek")
 
     async def get_pull(self, repo, pr_id: int):

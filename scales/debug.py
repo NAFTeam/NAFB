@@ -1,3 +1,7 @@
+"""
+This scale provides basic debug information about the current state of the bot.
+"""
+
 import datetime
 import io
 import platform
@@ -16,6 +20,7 @@ from dis_snek.models import (
     MessageContext,
     check,
     MaterialColors,
+    Timestamp,
 )
 from dis_snek.models.enums import Intents
 from dis_snek.models.scale import Scale
@@ -56,7 +61,10 @@ class DebugScale(Scale):
             url="https://github.com/LordOfPolls/Rebecca/blob/master/scales/debug.py",
             color=MaterialColors.BLUE_GREY,
         )
-        e.set_footer(self.bot.user.username, icon_url=self.bot.user.avatar.url)
+        e.set_footer(
+            "Dis-Snek Debug Scale",
+            icon_url="https://cdn.discordapp.com/icons/870046872864165888/22a17e5e162c0805615d456c8f13ce81.png",
+        )
         return e
 
     @slash_command(
@@ -69,11 +77,15 @@ class DebugScale(Scale):
 
         uptime = datetime.datetime.now() - self.bot.start_time
         e = self.D_Embed("General")
+        e.set_thumbnail(self.bot.user.avatar.url)
         e.add_field("Operating System", platform.platform())
 
         e.add_field("Version Info", f"Dis-Snek@{__version__} | Py@{__py_version__}")
 
-        e.add_field("Start Time", f"{self.bot.start_time}\n({strf_delta(uptime)})")
+        e.add_field(
+            "Start Time",
+            f"{Timestamp.fromdatetime(self.bot.start_time)}\n({strf_delta(uptime)} ago)",
+        )
 
         privileged_intents = [
             i.name for i in self.bot.intents if i in Intents.PRIVILEGED
@@ -98,8 +110,6 @@ class DebugScale(Scale):
             "channel_cache",
             "dm_channels",
             "guild_cache",
-            "guild_cache",
-            "member_cache",
             "member_cache",
             "message_cache",
             "role_cache",

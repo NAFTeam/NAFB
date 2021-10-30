@@ -10,7 +10,6 @@ from dis_snek.models import (
     Button,
     ComponentContext,
     InteractionContext,
-    SubCommand,
     spread_to_rows,
     component_callback,
     get_components_ids,

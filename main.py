@@ -1,33 +1,17 @@
 import logging
-import random
 
 import dis_snek.const
 from dis_snek.client import Snake
-from dis_snek.models.color import Color
-from dis_snek.models.command import message_command
-from dis_snek.models.discord_objects.channel import GuildText
-from dis_snek.models.discord_objects.components import ActionRow, Button
+from dis_snek.models.application_commands import (
+    slash_command,
+)
 from dis_snek.models.context import (
     InteractionContext,
-    ComponentContext,
-    Context,
-    MessageContext,
 )
 from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.application_commands import (
-    SlashCommandOption,
-    slash_command,
-    context_menu,
-    slash_option,
-)
 from dis_snek.models.enums import (
     Intents,
-    CommandTypes,
-    ButtonStyles,
-    AutoArchiveDuration,
-    ChannelTypes,
 )
-from dis_snek.models.events import Button as ButtonEvent
 from dis_snek.models.listener import listen
 
 logging.basicConfig()

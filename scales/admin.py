@@ -4,7 +4,6 @@ from dis_snek.models import (
     Scale,
     message_command,
     MessageContext,
-    checks,
     check,
     Context,
 )

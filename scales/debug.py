@@ -63,7 +63,7 @@ class DebugScale(Scale):
         )
         e.set_footer(
             "Dis-Snek Debug Scale",
-            icon_url="https://cdn.discordapp.com/icons/870046872864165888/22a17e5e162c0805615d456c8f13ce81.png",
+            icon_url="https://avatars.githubusercontent.com/u/91958504?s=200&v=4",
         )
         return e
 

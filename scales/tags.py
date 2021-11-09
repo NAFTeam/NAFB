@@ -81,11 +81,11 @@ class Tags(Scale):
         required=True,
     )
     async def tag(self, ctx: InteractionContext, tag_name: str):
-        tag = await self.get_tag(tag_name.lower())
+        tag = await self.get_tag(tag_name.lower().replace("_", " "))
         if tag:
             return await ctx.send(tag.content.encode("utf-8").decode("unicode_escape"))
         else:
-            return await ctx.send(f"No tag exists called {tag_name}")
+            return await ctx.send(f"No tag exists called `{tag_name}`")
 
     @slash_command("create_tag", "Create a tag")
     @slash_option(

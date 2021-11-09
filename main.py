@@ -24,9 +24,11 @@ class Bot(Snake):
     def __init__(self):
         super().__init__(
             intents=Intents.DEFAULT,
-            sync_interactions=False,
+            sync_interactions=True,
+            delete_unused_application_cmds=True,
             asyncio_debug=True,
             activity="with sneks",
+            debug_scope=870046872864165888,
         )
 
     @listen()
@@ -58,5 +60,6 @@ bot.grow_scale("scales.githubMessages")
 bot.grow_scale("scales.tictactoe")
 bot.grow_scale("scales.admin")
 bot.grow_scale("scales.debug")
+bot.grow_scale("scales.tags")
 
 bot.start((Path(__file__).parent / "token.txt").read_text().strip())

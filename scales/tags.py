@@ -20,7 +20,7 @@ from dis_snek.models import (
     Permission,
     PermissionTypes,
 )
-from thefuzz import fuzz
+from thefuzz import fuzz, process
 
 
 def deserialize_datetime(date):
@@ -139,11 +139,20 @@ class Tags(Scale):
     @del_tag.autocomplete("name")
     async def tag_autocomplete(self, ctx: AutocompleteContext, **kwargs):
         tags = self.tags.keys()
+        output = []
         if tags:
+            if ctx.input_text:
+                print(ctx.input_text)
+                result = process.extract(
+                    ctx.input_text, tags, scorer=fuzz.partial_token_sort_ratio
+                )
+                output = [t[0] for t in result if t[1] > 50]
+            else:
+                output = list(tags)[:25]
             tags = sorted(
                 tags, key=lambda x: fuzz.partial_ratio(x, ctx.input_text), reverse=True
             )[:25]
-            return await ctx.send(tags)
+            return await ctx.send(output)
 
         await ctx.send([])
 

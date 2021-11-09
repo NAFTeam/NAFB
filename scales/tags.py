@@ -1,6 +1,4 @@
-import asyncio
 import datetime
-import re
 
 import aioredis as aioredis
 import attr
@@ -9,16 +7,12 @@ from dis_snek.const import MISSING
 from dis_snek.models import (
     Scale,
     slash_command,
-    SlashCommandOption,
     OptionTypes,
     InteractionContext,
     slash_option,
     AutocompleteContext,
     Snowflake_Type,
     to_snowflake,
-    slash_permission,
-    Permission,
-    PermissionTypes,
 )
 from thefuzz import fuzz, process
 

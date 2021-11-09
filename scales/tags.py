@@ -149,9 +149,6 @@ class Tags(Scale):
                 output = [t[0] for t in result if t[1] > 50]
             else:
                 output = list(tags)[:25]
-            tags = sorted(
-                tags, key=lambda x: fuzz.partial_ratio(x, ctx.input_text), reverse=True
-            )[:25]
             return await ctx.send(output)
 
         await ctx.send([])

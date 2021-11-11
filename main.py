@@ -61,5 +61,6 @@ bot.grow_scale("scales.tictactoe")
 bot.grow_scale("scales.admin")
 bot.grow_scale("scales.debug")
 bot.grow_scale("scales.tags")
+bot.grow_scale("scales.publish")
 
 bot.start((Path(__file__).parent / "token.txt").read_text().strip())

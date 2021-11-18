@@ -100,15 +100,18 @@ class GithubMessages(Scale):
         if pr.state == "open":
             embed.description = "🟢 Open"
             embed.color = MaterialColors.GREEN
+
+        body = re.sub(r"<!--?.*-->", "", pr.body)
+
         embed.description += (
             f"{' - ' if len(pr.labels) != 0 else ''}{', '.join(f'``{l.name.capitalize()}``' for l in pr.labels)}\n"
-            f"{self.assemble_body(pr.body, max_lines=5)}"
+            f"{self.assemble_body(body, max_lines=5)}"
         )
 
-        if pr.body and "## What type of pull request is this?" in pr.body:
+        if body and "## What type of pull request is this?" in body:
             lines = []
             copy = False
-            for line in pr.body.split("\n"):
+            for line in body.split("\n"):
                 if "## What type of pull request is this?" in line.strip():
                     copy = True
                 if "## Description" in line.strip():
@@ -119,8 +122,8 @@ class GithubMessages(Scale):
             pr_type = pr_type.replace("[ ]", "❌")
             embed.add_field(name="PR Type", value=pr_type)
 
-        if pr.body and "## Checklist" in pr.body:
-            checklist = pr.body.split("## Checklist")[-1].strip("\r")
+        if body and "## Checklist" in body:
+            checklist = body.split("## Checklist")[-1].strip("\r")
             checklist = re.sub("\[[^\s]]", "✅", checklist)
             checklist = checklist.replace("[ ]", "❌")
             embed.add_field(name="Checklist", value=checklist)
@@ -149,9 +152,12 @@ class GithubMessages(Scale):
             else:
                 embed.description = "🟢 Open"
                 embed.color = MaterialColors.GREEN
+
+        body = re.sub(r"<!--?.*-->", "", issue.body)
+
         embed.description += (
             f"{' - ' if len(issue.labels) != 0 else ''}{', '.join(f'``{l.name.capitalize()}``' for l in issue.labels)}\n"
-            f"{self.assemble_body(issue.body)}"
+            f"{self.assemble_body(body)}"
         )
 
         await message.reply(embed=embed)

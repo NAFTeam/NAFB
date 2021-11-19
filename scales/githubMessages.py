@@ -131,7 +131,7 @@ class GithubMessages(Scale):
         if not pr.merged:
             embed.add_field(name="Mergeable", value=pr.mergeable_state, inline=False)
 
-        await message.channel.send(embeds=embed)
+        await message.reply(embeds=embed)
 
     async def send_issue(self, message: Message, issue):
         """Send a reply to a message with a formatted issue"""

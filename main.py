@@ -50,6 +50,21 @@ class Bot(Snake):
         emb.color = 16426522
         await ctx.send(embeds=emb)
 
+    @slash_command(
+        name="news_ping",
+        description="Get mentioned whenever news is posted",
+        scopes=[701347683591389185],
+    )
+    async def news_ping(self, ctx: InteractionContext):
+        await ctx.defer(ephemeral=True)
+        ping_id = 923682774915883028
+        if ctx.author.has_role(ping_id):
+            await ctx.author.remove_role(ping_id, "User requested to remove role")
+            return await ctx.send("The news ping role has been removed", ephemeral=True)
+        else:
+            await ctx.author.add_role(ping_id, "User requested to add role")
+            return await ctx.send("The news ping role has been added", ephemeral=True)
+
 
 bot = Bot()
 bot.g_id = 701347683591389185

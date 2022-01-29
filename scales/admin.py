@@ -1,5 +1,5 @@
 import aiohttp
-from dis_snek import CommandCheckFailure
+from dis_snek.client.errors import CommandCheckFailure
 from dis_snek.models import (
     Scale,
     message_command,

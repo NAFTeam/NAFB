@@ -4,11 +4,7 @@ import traceback
 from pathlib import Path
 
 import github.GithubException
-from dis_snek.models.color import MaterialColors
-from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.discord_objects.message import Message
-from dis_snek.models.listener import listen
-from dis_snek.models.scale import Scale
+from dis_snek import Scale, Message, Embed, MaterialColors, listen
 from github import Github
 
 

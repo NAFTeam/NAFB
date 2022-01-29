@@ -1,19 +1,8 @@
 import logging
 from pathlib import Path
 
-import dis_snek.const
-from dis_snek.client import Snake
-from dis_snek.models.application_commands import (
-    slash_command,
-)
-from dis_snek.models.context import (
-    InteractionContext,
-)
-from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.enums import (
-    Intents,
-)
-from dis_snek.models.listener import listen
+import dis_snek
+from dis_snek import Snake, Intents, listen, slash_command, InteractionContext, Embed
 
 logging.basicConfig()
 cls_log = logging.getLogger(dis_snek.const.logger_name)
@@ -23,12 +12,13 @@ cls_log.setLevel(logging.DEBUG)
 class Bot(Snake):
     def __init__(self):
         super().__init__(
-            intents=Intents.DEFAULT,
+            intents=Intents.DEFAULT | Intents.GUILD_MEMBERS,
             sync_interactions=True,
             delete_unused_application_cmds=True,
             asyncio_debug=True,
             activity="with sneks",
             debug_scope=870046872864165888,
+            fetch_members=True,
         )
 
     @listen()
@@ -74,8 +64,9 @@ bot.grow_scale("scales.support")
 bot.grow_scale("scales.githubMessages")
 bot.grow_scale("scales.tictactoe")
 bot.grow_scale("scales.admin")
-bot.grow_scale("dis_snek.debug_scale")
+bot.grow_scale("dis_snek.ext.debug_scale")
 bot.grow_scale("scales.tags")
 bot.grow_scale("scales.publish")
+bot.grow_scale("scales.fun")
 
 bot.start((Path(__file__).parent / "token.txt").read_text().strip())

@@ -5,6 +5,7 @@ import math
 import random
 from typing import List
 
+from dis_snek import Scale
 from dis_snek.models import (
     ButtonStyles,
     Button,
@@ -15,7 +16,6 @@ from dis_snek.models import (
     get_components_ids,
     slash_command,
 )
-from dis_snek.models.scale import Scale
 
 
 class GameState(enum.IntEnum):

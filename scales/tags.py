@@ -3,7 +3,7 @@ import datetime
 import aioredis as aioredis
 import attr
 import orjson as orjson
-from dis_snek.const import MISSING
+from dis_snek import MISSING
 from dis_snek.models import (
     Scale,
     slash_command,

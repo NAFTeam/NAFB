@@ -1,10 +1,15 @@
-from dis_snek.models.application_commands import slash_command
-from dis_snek.models.command import message_command
-from dis_snek.models.context import MessageContext, InteractionContext
-from dis_snek.models.discord_objects.components import Button
-from dis_snek.models.enums import ButtonStyles, AutoArchiveDuration, ChannelTypes
-from dis_snek.models.listener import listen
-from dis_snek.models.scale import Scale
+from dis_snek import (
+    message_command,
+    Scale,
+    MessageContext,
+    Button,
+    ButtonStyles,
+    InteractionContext,
+    AutoArchiveDuration,
+    ChannelTypes,
+    listen,
+    slash_command,
+)
 
 thread_channel_id = 901576539941007400
 

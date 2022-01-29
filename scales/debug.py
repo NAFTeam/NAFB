@@ -10,8 +10,9 @@ import traceback
 from collections import Counter
 from contextlib import redirect_stdout
 
-from dis_snek.const import __version__, __py_version__
-from dis_snek.errors import CommandCheckFailure
+import dis_snek
+from dis_snek import Scale, Intents, CommandCheckFailure
+from dis_snek.client.utils.cache import TTLCache
 from dis_snek.models import (
     slash_command,
     InteractionContext,
@@ -22,9 +23,7 @@ from dis_snek.models import (
     MaterialColors,
     Timestamp,
 )
-from dis_snek.models.enums import Intents
-from dis_snek.models.scale import Scale
-from dis_snek.utils.cache import TTLCache
+from requests import __version__
 
 
 def strf_delta(time_delta: datetime.timedelta, show_seconds=True) -> str:
@@ -80,7 +79,10 @@ class DebugScale(Scale):
         e.set_thumbnail(self.bot.user.avatar.url)
         e.add_field("Operating System", platform.platform())
 
-        e.add_field("Version Info", f"Dis-Snek@{__version__} | Py@{__py_version__}")
+        e.add_field(
+            "Version Info",
+            f"Dis-Snek@{dis_snek.const.__version__} | Py@{dis_snek.const.__py_version__}",
+        )
 
         e.add_field(
             "Start Time",

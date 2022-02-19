@@ -116,7 +116,7 @@ class Tags(Scale):
         required=True,
     )
     async def del_tag(self, ctx: InteractionContext, name: str):
-        tag = await self.get_tag(name)
+        tag = await self.get_tag(name.lower().replace("_", " "))
         if tag:
             if tag.author_id == ctx.author.id or ctx.author.has_role(
                 870318611737247764
@@ -127,7 +127,7 @@ class Tags(Scale):
                 return await ctx.send(
                     "Only the creator of the tag, or a contributor may delete it"
                 )
-        return await ctx.send(f"No tag called `{tag.name}`")
+        return await ctx.send(f"No tag called `{name}`")
 
     @tag.autocomplete("tag_name")
     @del_tag.autocomplete("name")

@@ -7,11 +7,22 @@ from pathlib import Path
 import aiohttp
 import github.GithubException
 import requests
-from dis_snek import Scale, Message, Embed, MaterialColors, listen, ButtonStyles, Button, component_callback, \
-    ComponentContext
+from dis_snek import (
+    Scale,
+    Message,
+    Embed,
+    MaterialColors,
+    listen,
+    ButtonStyles,
+    Button,
+    component_callback,
+    ComponentContext,
+)
 from github import Github
 
-snippet_regex = re.compile(r"github\.com/([\w\-_]+)/([\w\-_]+)/blob/([\w\-_]+)/([\w\-_/.]+)(#L[\d]+(-L[\d]+)?)?")
+snippet_regex = re.compile(
+    r"github\.com/([\w\-_]+)/([\w\-_]+)/blob/([\w\-_]+)/([\w\-_/.]+)(#L[\d]+(-L[\d]+)?)?"
+)
 
 
 class GithubMessages(Scale):
@@ -24,18 +35,27 @@ class GithubMessages(Scale):
     @component_callback("delete")
     async def delete_resp(self, context: ComponentContext):
         await context.defer(ephemeral=True)
-        reply = await self.bot.cache.get_message(context.message.message_reference.channel_id, context.message.message_reference.message_id)
+        reply = await self.bot.cache.get_message(
+            context.message.message_reference.channel_id,
+            context.message.message_reference.message_id,
+        )
         if reply:
             if context.author.id == reply.author.id:
                 await context.send("Okay!", ephemeral=True)
                 await context.message.delete()
             else:
-                await context.send("You do not have permission to delete that!", ephemeral=True)
+                await context.send(
+                    "You do not have permission to delete that!", ephemeral=True
+                )
         else:
             await context.send("An unknown error occurred", ephemeral=True)
 
     async def reply(self, message: Message, **kwargs):
-        await message.reply(**kwargs, components=[Button(ButtonStyles.RED, emoji="🗑️", custom_id="delete")])
+        await message.suppress_embeds()
+        await message.reply(
+            **kwargs,
+            components=[Button(ButtonStyles.RED, emoji="🗑️", custom_id="delete")],
+        )
 
     async def get_pull(self, repo, pr_id: int):
         try:
@@ -183,7 +203,11 @@ class GithubMessages(Scale):
     async def send_snippet(self, message: Message):
         results = snippet_regex.findall(message.content)[0]
 
-        lines = [int(re.sub("[^0-9]", "", line)) for line in results[4].split("-")] if len(results) >= 5 else None
+        lines = (
+            [int(re.sub("[^0-9]", "", line)) for line in results[4].split("-")]
+            if len(results) >= 5
+            else None
+        )
         if not lines:
             return
         user = results[0]
@@ -204,12 +228,15 @@ class GithubMessages(Scale):
                     lines[0] -= 1  # account for 0 based indexing
                     sample = file_data.split("\n")
                     if len(lines) == 2:
-                        sample = sample[lines[0]:][:lines[1] - lines[0]]
+                        sample = sample[lines[0] :][: lines[1] - lines[0]]
                         file_data = "\n".join(sample)
                     else:
                         file_data = sample[lines[0]]
 
-                embed = Embed(title=f"{user}/{repo}", description=f"```{extension}\n{textwrap.dedent(file_data)}```")
+                embed = Embed(
+                    title=f"{user}/{repo}",
+                    description=f"```{extension}\n{textwrap.dedent(file_data)}```",
+                )
 
                 await self.reply(message, embeds=embed)
 

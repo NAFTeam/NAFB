@@ -1,11 +1,17 @@
 import asyncio
 import re
+import textwrap
 import traceback
 from pathlib import Path
 
+import aiohttp
 import github.GithubException
-from dis_snek import Scale, Message, Embed, MaterialColors, listen
+import requests
+from dis_snek import Scale, Message, Embed, MaterialColors, listen, ButtonStyles, Button, component_callback, \
+    ComponentContext
 from github import Github
+
+snippet_regex = re.compile(r"github\.com/([\w\-_]+)/([\w\-_]+)/blob/([\w\-_]+)/([\w\-_/.]+)(#L[\d]+(-L[\d]+)?)?")
 
 
 class GithubMessages(Scale):
@@ -14,6 +20,22 @@ class GithubMessages(Scale):
             (Path(__file__).parent.parent / "git_token.txt").read_text().strip()
         )
         self.repo = self.git.get_repo("Discord-Snake-Pit/Dis-Snek")
+
+    @component_callback("delete")
+    async def delete_resp(self, context: ComponentContext):
+        await context.defer(ephemeral=True)
+        reply = await self.bot.cache.get_message(context.message.message_reference.channel_id, context.message.message_reference.message_id)
+        if reply:
+            if context.author.id == reply.author.id:
+                await context.send("Okay!", ephemeral=True)
+                await context.message.delete()
+            else:
+                await context.send("You do not have permission to delete that!", ephemeral=True)
+        else:
+            await context.send("An unknown error occurred", ephemeral=True)
+
+    async def reply(self, message: Message, **kwargs):
+        await message.reply(**kwargs, components=[Button(ButtonStyles.RED, emoji="🗑️", custom_id="delete")])
 
     async def get_pull(self, repo, pr_id: int):
         try:
@@ -127,7 +149,7 @@ class GithubMessages(Scale):
         if not pr.merged:
             embed.add_field(name="Mergeable", value=pr.mergeable_state, inline=False)
 
-        await message.reply(embeds=embed)
+        await self.reply(message, embeds=embed)
 
     async def send_issue(self, message: Message, issue):
         """Send a reply to a message with a formatted issue"""
@@ -156,7 +178,40 @@ class GithubMessages(Scale):
             f"{self.assemble_body(body)}"
         )
 
-        await message.reply(embed=embed)
+        await self.reply(message, embeds=embed)
+
+    async def send_snippet(self, message: Message):
+        results = snippet_regex.findall(message.content)[0]
+
+        lines = [int(re.sub("[^0-9]", "", line)) for line in results[4].split("-")] if len(results) >= 5 else None
+        if not lines:
+            return
+        user = results[0]
+        repo = results[1]
+        branch = results[2]
+        file = results[3]
+        extension = file.split(".")[-1]
+
+        raw_url = f"https://raw.githubusercontent.com/{user}/{repo}/{branch}/{file}"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(raw_url) as resp:
+                if resp.status != 200:
+                    return
+
+                file_data = await resp.text()
+                if file_data and lines:
+                    lines[0] -= 1  # account for 0 based indexing
+                    sample = file_data.split("\n")
+                    if len(lines) == 2:
+                        sample = sample[lines[0]:][:lines[1] - lines[0]]
+                        file_data = "\n".join(sample)
+                    else:
+                        file_data = sample[lines[0]]
+
+                embed = Embed(title=f"{user}/{repo}", description=f"```{extension}\n{textwrap.dedent(file_data)}```")
+
+                await self.reply(message, embeds=embed)
 
     @listen()
     async def on_message_create(self, event):
@@ -168,7 +223,11 @@ class GithubMessages(Scale):
 
             data = None
             try:
-                if data := re.search(r"(?:\s|^)#(\d{1,3})(?:\s|$)", in_data):
+
+                if "github.com/" in in_data and "#l" in in_data:
+                    print("searching for link")
+                    return await self.send_snippet(message)
+                elif data := re.search(r"(?:\s|^)#(\d{1,3})(?:\s|$)", in_data):
                     issue = await self.get_issue(self.repo, int(data.group(1)))
                     if not issue:
                         return

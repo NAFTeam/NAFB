@@ -32,7 +32,7 @@ class Support(Scale):
             )
 
     async def create_thread(self, ctx: InteractionContext):
-        channel = await self.bot.get_channel(thread_channel_id)
+        channel = await self.bot.fetch_channel(thread_channel_id)
 
         thread = await channel.create_thread_without_message(
             name=f"{ctx.author.display_name}'s Support Thread",

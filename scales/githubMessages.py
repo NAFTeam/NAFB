@@ -35,7 +35,7 @@ class GithubMessages(Scale):
     @component_callback("delete")
     async def delete_resp(self, context: ComponentContext):
         await context.defer(ephemeral=True)
-        reply = await self.bot.cache.get_message(
+        reply = await self.bot.cache.fetch_message(
             context.message.message_reference.channel_id,
             context.message.message_reference.message_id,
         )

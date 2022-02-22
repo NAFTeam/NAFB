@@ -191,7 +191,7 @@ class GithubMessages(Scale):
                 embed.description = "🟢 Open"
                 embed.color = MaterialColors.GREEN
 
-        body = re.sub(r"<!--?.*-->", "", issue.body)
+        body = re.sub(r"<!--?.*-->", "", issue.body if issue.body else "_Empty_")
 
         embed.description += (
             f"{' - ' if len(issue.labels) != 0 else ''}{', '.join(f'``{l.name.capitalize()}``' for l in issue.labels)}\n"

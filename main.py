@@ -17,8 +17,8 @@ class Bot(Snake):
             sync_interactions=True,
             delete_unused_application_cmds=True,
             asyncio_debug=True,
-            activity="with sneks(dev)",
-            debug_scope=701347683591389185,
+            activity="with sneks",
+            debug_scope=870046872864165888,
             fetch_members=True,
         )
 

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import aiohttp
 import github.GithubException
-import requests
 from dis_snek import (
     Scale,
     Message,

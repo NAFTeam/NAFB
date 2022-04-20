@@ -6,10 +6,14 @@ from dis_snek import (
     ButtonStyles,
     InteractionContext,
     AutoArchiveDuration,
-    ChannelTypes,
-    listen,
     slash_command,
+    component_callback,
+    ComponentContext,
+    Modal,
+    ParagraphText,
+    ModalContext,
 )
+from dis_snek.models.snek.application_commands import modal_callback
 
 thread_channel_id = 901576539941007400
 
@@ -31,30 +35,75 @@ class Support(Scale):
                 ],
             )
 
-    async def create_thread(self, ctx: InteractionContext):
-        channel = await self.bot.fetch_channel(thread_channel_id)
+    @modal_callback("support_thread_modal")
+    async def create_thread(self, ctx: ModalContext):
+        await ctx.defer(ephemeral=True)
 
-        thread = await channel.create_thread_without_message(
+        channel = await self.bot.fetch_channel(thread_channel_id)
+        description = ctx.responses.get("description")
+        code = ctx.responses.get("code")
+        traceback = ctx.responses.get("traceback")
+        additional = ctx.responses.get("additional")
+
+        if code and "```" not in code:
+            code = f"```py\n{code}```"
+        if traceback and "```" not in traceback:
+            traceback = f"```py\n{traceback}```"
+
+        thread = await channel.create_public_thread(
             name=f"{ctx.author.display_name}'s Support Thread",
             auto_archive_duration=AutoArchiveDuration.ONE_HOUR,
             reason="Bot Support Thread",
-            thread_type=ChannelTypes.GUILD_PUBLIC_THREAD,
         )
         await thread.send(
-            f"Hi {ctx.author.mention}. Welcome to your support thread! Please explain your issue here "
-            f"(with tracebacks where appropriate), and someone will help you shortly."
+            f"Welcome to your support thread {ctx.author.mention} - Someone will help you shortly"
         )
+        await thread.send(f"**Provided information:**\n{description}")
+        if code:
+            await thread.send(f"**Code Sample:**\n{code}")
+        if traceback:
+            await thread.send(f"**Traceback:**\n{traceback}")
+        if additional:
+            await thread.send(f"**Additional:**\n{additional}")
         await ctx.send(
             f"Your support thread has been created here: {thread.mention}",
             ephemeral=True,
         )
 
-    @listen()
-    async def on_button(self, b):
-        ctx = b.context
-        if ctx.custom_id == "create_support_thread":
-            await ctx.defer(ephemeral=True)
-            await self.create_thread(ctx)
+    @component_callback("create_support_thread")
+    async def support_thread_button(self, ctx: ComponentContext):
+        await ctx.send_modal(
+            Modal(
+                "Support Thread Wizard",
+                custom_id="support_thread_modal",
+                components=[
+                    ParagraphText(
+                        label="Describe your problem",
+                        custom_id="description",
+                        placeholder="Please provide a sumamry of your problem",
+                        required=True,
+                    ),
+                    ParagraphText(
+                        label="Relevant Code",
+                        custom_id="code",
+                        placeholder="If you have example code put it here",
+                        required=False,
+                    ),
+                    ParagraphText(
+                        label="Traceback",
+                        custom_id="traceback",
+                        placeholder="If you have a traceback put it here",
+                        required=False,
+                    ),
+                    ParagraphText(
+                        label="Additional Information",
+                        custom_id="additional",
+                        placeholder="Anything else? Put it here",
+                        required=False,
+                    ),
+                ],
+            )
+        )
 
     @slash_command(
         "support-thread",

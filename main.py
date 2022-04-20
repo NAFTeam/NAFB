@@ -1,8 +1,9 @@
+import asyncio
 import logging
 from pathlib import Path
 
 import dis_snek
-from dis_snek import Snake, Intents, listen, slash_command, InteractionContext, Embed
+from dis_snek import Snake, Intents, listen, slash_command, InteractionContext
 
 logging.basicConfig()
 cls_log = logging.getLogger(dis_snek.const.logger_name)
@@ -16,29 +17,14 @@ class Bot(Snake):
             sync_interactions=True,
             delete_unused_application_cmds=True,
             asyncio_debug=True,
-            activity="with sneks",
-            debug_scope=870046872864165888,
+            activity="with sneks(dev)",
+            debug_scope=701347683591389185,
             fetch_members=True,
         )
 
     @listen()
     async def on_ready(self):
         print(f"{bot.user} logged in")
-
-    @slash_command(name="info", description="Information about sneks")
-    async def info(self, ctx: InteractionContext):
-        emb = Embed(
-            description="Dis-snek is an API Wrapper for discord, written in Python. This wrapper is in early development, as such this server acts as a place to contribute and give feedback as the wrapper matures"
-        )
-        emb.add_field(
-            "Links:",
-            value="-[GitHub](https://github.com/LordOfPolls/dis_snek)\n-[Trello](https://trello.com/b/LVjnmYKt/dev-board)",
-        )
-        emb.set_thumbnail(
-            url="https://cdn.discordapp.com/icons/870046872864165888/c665942b7f58cc2d2720fd276ae1729e.png?size=1024"
-        )
-        emb.color = 16426522
-        await ctx.send(embeds=emb)
 
     @slash_command(
         name="news_ping",
@@ -83,5 +69,6 @@ bot.grow_scale("dis_snek.ext.debug_scale")
 bot.grow_scale("scales.tags")
 bot.grow_scale("scales.publish")
 bot.grow_scale("scales.fun")
+# bot.grow_scale("scales.test")
 
-bot.start((Path(__file__).parent / "token.txt").read_text().strip())
+asyncio.run(bot.astart((Path(__file__).parent / "token.txt").read_text().strip()))

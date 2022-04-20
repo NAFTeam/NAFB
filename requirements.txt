@@ -1,2 +1,5 @@
 dis_snek
 PyGithub
+aioredis
+orjson
+thefuzz

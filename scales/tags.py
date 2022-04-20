@@ -1,9 +1,20 @@
 import datetime
+import logging
 
 import aioredis as aioredis
 import attr
 import orjson as orjson
-from dis_snek import MISSING
+from dis_snek import (
+    MISSING,
+    ModalContext,
+    Modal,
+    ShortText,
+    ParagraphText,
+    Embed,
+    Timestamp,
+    BrandColors,
+)
+from dis_snek.client.utils import optional
 from dis_snek.models import (
     Scale,
     slash_command,
@@ -14,7 +25,10 @@ from dis_snek.models import (
     Snowflake_Type,
     to_snowflake,
 )
+from dis_snek.models.snek.application_commands import modal_callback
 from thefuzz import fuzz, process
+
+log = logging.getLogger("rebecca")
 
 
 def deserialize_datetime(date):
@@ -31,13 +45,21 @@ class Tag:
     creation: datetime = attr.ib(
         factory=datetime.datetime.now, converter=deserialize_datetime
     )
+    modified: datetime.datetime | None = attr.ib(
+        default=None, converter=optional(deserialize_datetime)
+    )
+    modifier_id: Snowflake_Type = attr.ib(
+        default=None, converter=optional(to_snowflake)
+    )
 
 
 class Tags(Scale):
     def __init__(self, bot):
         self.tags = {}
         self.redis: aioredis.Redis = MISSING
-        self.bot.loop.create_task(self.connect())
+
+    async def async_start(self):
+        await self.connect()
 
     async def connect(self):
         self.redis = await aioredis.from_url(
@@ -53,7 +75,7 @@ class Tags(Scale):
         keys = await self.redis.keys("*")
         for key in keys:
             await self.get_tag(key)
-        print(f"Cached {len(self.tags)} tags")
+        log.info(f"Cached {len(self.tags)} tags")
 
     async def get_tag(self, tag_name: str) -> Tag:
         if tag_name in self.tags:
@@ -73,7 +95,28 @@ class Tags(Scale):
         self.tags.pop(tag.name, None)
         await self.redis.delete(tag.name)
 
-    @slash_command("tag", "Send a requested tag to this channel")
+    @modal_callback("create_tag", "edit_tag")
+    async def tag_modal_rcv(self, ctx: ModalContext):
+        name = ctx.responses.get("name")
+        content = ctx.responses.get("content")
+        edit_mode = ctx.custom_id == "edit_tag"
+        tag = None
+
+        if not edit_mode and name.lower() in self.tags.keys():
+            return await ctx.send(f"`{name}` already exists")
+        else:
+            if edit_mode:
+                tag = await self.get_tag(name.lower())
+                tag.modifier_id = ctx.author.id
+                tag.modified = datetime.datetime.now()
+                tag.content = content
+            if not tag:
+                tag = Tag(name, content, ctx.author.id)
+
+            await self.put_tag(tag)
+            await ctx.send(f"{'Edited' if edit_mode else 'Created'} `{tag.name}`")
+
+    @slash_command(name="tag", description="Send a requested tag to this channel")
     @slash_option(
         "tag_name",
         "The name of the tag you want to send",
@@ -87,28 +130,27 @@ class Tags(Scale):
         else:
             return await ctx.send(f"No tag exists called `{tag_name}`")
 
-    @slash_command("create_tag", "Create a tag")
-    @slash_option(
-        "name",
-        "The name of the tag you want to create",
-        OptionTypes.STRING,
-        required=True,
-    )
-    @slash_option(
-        "content",
-        "The name of the tag you want to create",
-        OptionTypes.STRING,
-        required=True,
-    )
-    async def create_tag(self, ctx: InteractionContext, name: str, content: str):
-        if name.lower() in self.tags.keys():
-            return await ctx.send(f"`{name}` already exists")
-        else:
-            tag = Tag(name, content, ctx.author.id)
-            await self.put_tag(tag)
-            await ctx.send(f"Created `{tag.name}`")
+    @slash_command(name="create_tag", description="Create a tag")
+    async def create_tag(self, ctx: InteractionContext):
+        modal = Modal(
+            title="Tag Wizard",
+            components=[
+                ShortText(
+                    label="Tag Name",
+                    placeholder="The name for this tag",
+                    custom_id="name",
+                ),
+                ParagraphText(
+                    label="Tag Content",
+                    placeholder="What should this tag say",
+                    custom_id="content",
+                ),
+            ],
+            custom_id="create_tag",
+        )
+        await ctx.send_modal(modal)
 
-    @slash_command("delete_tag", "Delete a tag")
+    @slash_command(name="delete_tag", description="Delete a tag")
     @slash_option(
         "name",
         "The name of the tag you want to delete",
@@ -129,8 +171,68 @@ class Tags(Scale):
                 )
         return await ctx.send(f"No tag called `{name}`")
 
+    @slash_command(
+        name="tag_details", description="Get the details about a specified tag"
+    )
+    @slash_option(
+        "name",
+        "The name of the tag you want to delete",
+        OptionTypes.STRING,
+        required=True,
+    )
+    async def tag_details(self, ctx: InteractionContext, name: str):
+        tag = await self.get_tag(name.lower().replace("_", " "))
+        if tag:
+            author = await ctx.guild.fetch_member(tag.author_id)
+            embed = Embed(
+                title="Tag Content",
+                description=f"{tag.content}",
+                color=BrandColors.BLURPLE,
+            )
+            embed.add_field("Created At", Timestamp.fromdatetime(tag.creation))
+            if tag.modifier_id is not None:
+                mod_user = await ctx.guild.fetch_member(tag.modifier_id)
+                embed.add_field("Last Modified", Timestamp.fromdatetime(tag.modified))
+                embed.add_field("Last Modifier", mod_user.tag)
+            embed.set_author(author.tag, icon_url=author.display_avatar.url)
+
+            return await ctx.send(embeds=embed)
+        return await ctx.send(f"No tag called `{name}`")
+
+    @slash_command(name="edit_tag", description="Edit an existing tag.")
+    @slash_option(
+        "name",
+        "The name of the tag you want to edit",
+        OptionTypes.STRING,
+        required=True,
+    )
+    async def edit_tag(self, ctx: InteractionContext, name: str):
+        tag = await self.get_tag(name.lower().replace("_", " "))
+        if tag:
+            modal = Modal(
+                title="Tag Wizard",
+                components=[
+                    ShortText(
+                        label="Tag Name",
+                        value=tag.name,
+                        custom_id="name",
+                    ),
+                    ParagraphText(
+                        label="Tag Content",
+                        placeholder="What should this tag say",
+                        value=tag.content,
+                        custom_id="content",
+                    ),
+                ],
+                custom_id="edit_tag",
+            )
+            return await ctx.send_modal(modal)
+        return await ctx.send(f"No tag called `{name}`")
+
     @tag.autocomplete("tag_name")
     @del_tag.autocomplete("name")
+    @tag_details.autocomplete("name")
+    @edit_tag.autocomplete("name")
     async def tag_autocomplete(self, ctx: AutocompleteContext, **kwargs):
         tags = self.tags.keys()
         output = []
@@ -149,4 +251,4 @@ class Tags(Scale):
 
 
 def setup(bot):
-    Tags(bot)
+    t = Tags(bot)

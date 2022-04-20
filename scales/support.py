@@ -80,9 +80,9 @@ class Support(Scale):
                 custom_id="support_thread_modal",
                 components=[
                     ParagraphText(
-                        label="Describe your problem",
+                        label="Describe Your Problem",
                         custom_id="description",
-                        placeholder="Please provide a sumamry of your problem",
+                        placeholder="Please provide a summary of your problem",
                         required=True,
                     ),
                     ParagraphText(

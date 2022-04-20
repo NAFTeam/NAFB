@@ -1,3 +1,5 @@
+import textwrap
+
 from dis_snek import (
     message_command,
     Scale,
@@ -46,9 +48,9 @@ class Support(Scale):
         additional = ctx.responses.get("additional")
 
         if code and "```" not in code:
-            code = f"```py\n{code}```"
+            code = f"```py\n{textwrap.dedent(code)}```"
         if traceback and "```" not in traceback:
-            traceback = f"```py\n{traceback}```"
+            traceback = f"```py\n{textwrap.dedent(traceback)}```"
 
         thread = await channel.create_public_thread(
             name=f"{ctx.author.display_name}'s Support Thread",

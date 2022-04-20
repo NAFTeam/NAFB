@@ -113,8 +113,7 @@ class Support(Scale):
         sub_cmd_description="Start a support thread",
     )
     async def support_start(self, ctx: InteractionContext):
-        await ctx.defer(ephemeral=True)
-        await self.create_thread(ctx)
+        await self.support_thread_button(ctx)
 
 
 def setup(bot):

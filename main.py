@@ -69,6 +69,6 @@ bot.grow_scale("dis_snek.ext.debug_scale")
 bot.grow_scale("scales.tags")
 bot.grow_scale("scales.publish")
 bot.grow_scale("scales.fun")
-# bot.grow_scale("scales.test")
+bot.grow_scale("scales.radio")
 
 asyncio.run(bot.astart((Path(__file__).parent / "token.txt").read_text().strip()))

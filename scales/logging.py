@@ -38,9 +38,9 @@ class Logging(Scale):
         before = event.before
         after = event.after
 
-        if (
-            before.display_name == after.display_name and before.roles == after.roles
-        ) or (after is None or before is None):
+        if (before.display_name == after.display_name and before.roles == after.roles) or (
+            after is None or before is None
+        ):
             # filter events
             return None
 
@@ -67,13 +67,9 @@ class Logging(Scale):
                     new_roles.append(role)
 
             if new_roles:
-                emb.add_field(
-                    name="New Roles", value="\n".join(r.name for r in new_roles)
-                )
+                emb.add_field(name="New Roles", value="\n".join(r.name for r in new_roles))
             if removed_roles:
-                emb.add_field(
-                    name="Removed Roles", value="\n".join(r.name for r in removed_roles)
-                )
+                emb.add_field(name="Removed Roles", value="\n".join(r.name for r in removed_roles))
 
         await self.send_embed(emb)
 
@@ -109,8 +105,11 @@ class Logging(Scale):
         emb = self.base_embed(event)
         emb.color = BrandColors.YELLOW
         emb.url = event.before.jump_url
-        emb.set_thumbnail(url=event.member.display_avatar.url)
-        emb.set_author(name=event.member.tag, icon_url=event.member.display_avatar.url)
+        emb.set_thumbnail(url=event.before.author.display_avatar.url)
+        emb.set_author(
+            name=event.before.author.tag,
+            icon_url=event.before.author.display_avatar.url,
+        )
 
         before_content = event.before.content or "[Empty]"
         if len(before_content) > 1020:
@@ -129,18 +128,21 @@ class Logging(Scale):
     async def on_message_delete(self, event: MessageDelete):
         emb = self.base_embed(event)
         emb.color = BrandColors.YELLOW
-        emb.set_thumbnail(url=event.member.display_avatar.url)
-        emb.set_author(name=event.member.tag, icon_url=event.member.display_avatar.url)
+        emb.set_thumbnail(url=event.message.author.display_avatar.url)
+        emb.set_author(
+            name=event.message.author.tag,
+            icon_url=event.message.author.display_avatar.url,
+        )
 
         content = event.message.content or "[Empty]"
         if len(content) > 1020:
             content = content[:1020] + "..."
         emb.add_field(name="🗑️ Message Deleted", value=event.message.content)
 
-        if (count := len(event.message.embeds)) > 0:
+        if event.message.embeds and (count := len(event.message.embeds)) > 0:
             emb.add_field(name="# Embeds", value=str(count))
 
-        if (count := len(event.message.attachments)) > 0:
+        if event.message.attachments and (count := len(event.message.attachments)) > 0:
             emb.add_field(name="# Attachments", value=str(count))
 
         await self.send_embed(emb)

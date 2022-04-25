@@ -13,7 +13,9 @@ cls_log.setLevel(logging.DEBUG)
 class Bot(Snake):
     def __init__(self):
         super().__init__(
-            intents=Intents.DEFAULT | Intents.GUILD_MEMBERS,
+            intents=Intents.DEFAULT
+            | Intents.GUILD_MEMBERS
+            | Intents.GUILD_MESSAGE_CONTENT,
             sync_interactions=True,
             delete_unused_application_cmds=True,
             asyncio_debug=True,

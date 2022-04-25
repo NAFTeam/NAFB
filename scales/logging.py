@@ -38,9 +38,9 @@ class Logging(Scale):
         before = event.before
         after = event.after
 
-        if (before.display_name == after.display_name and before.roles == after.roles) or (
-            after is None or before is None
-        ):
+        if (
+            before.display_name == after.display_name and before.roles == after.roles
+        ) or (after is None or before is None):
             # filter events
             return None
 
@@ -67,9 +67,13 @@ class Logging(Scale):
                     new_roles.append(role)
 
             if new_roles:
-                emb.add_field(name="New Roles", value="\n".join(r.name for r in new_roles))
+                emb.add_field(
+                    name="New Roles", value="\n".join(r.name for r in new_roles)
+                )
             if removed_roles:
-                emb.add_field(name="Removed Roles", value="\n".join(r.name for r in removed_roles))
+                emb.add_field(
+                    name="Removed Roles", value="\n".join(r.name for r in removed_roles)
+                )
 
         await self.send_embed(emb)
 
@@ -102,6 +106,11 @@ class Logging(Scale):
 
     @listen()
     async def on_message_edit(self, event: MessageUpdate):
+        if not event.before or not event.after:
+            return
+        if event.before.content == event.after.content:
+            return
+
         emb = self.base_embed(event)
         emb.color = BrandColors.YELLOW
         emb.url = event.before.jump_url
@@ -137,7 +146,7 @@ class Logging(Scale):
         content = event.message.content or "[Empty]"
         if len(content) > 1020:
             content = content[:1020] + "..."
-        emb.add_field(name="🗑️ Message Deleted", value=event.message.content)
+        emb.add_field(name="🗑️ Message Deleted", value=content)
 
         if event.message.embeds and (count := len(event.message.embeds)) > 0:
             emb.add_field(name="# Embeds", value=str(count))

@@ -8,7 +8,14 @@ from dis_snek import (
     Role,
     Timestamp,
 )
-from dis_snek.api.events import MemberUpdate, MemberAdd, MemberRemove, BaseEvent
+from dis_snek.api.events import (
+    MemberUpdate,
+    MemberAdd,
+    MemberRemove,
+    MessageDelete,
+    MessageUpdate,
+    BaseEvent,
+)
 from dis_snek.ext.debug_scale import strf_delta
 
 
@@ -95,6 +102,47 @@ class Logging(Scale):
             name="⏰ Left After",
             value=strf_delta(Timestamp.utcnow() - event.member.joined_at),
         )
+        await self.send_embed(emb)
+
+    @listen()
+    async def on_message_edit(self, event: MessageUpdate):
+        emb = self.base_embed(event)
+        emb.color = BrandColors.YELLOW
+        emb.url = event.before.jump_url
+        emb.set_thumbnail(url=event.member.display_avatar.url)
+        emb.set_author(name=event.member.tag, icon_url=event.member.display_avatar.url)
+
+        before_content = event.before.content or "[Empty]"
+        if len(before_content) > 1020:
+            before_content = before_content[:1020] + "..."
+        after_content = event.after.content or "[Empty]"
+        if len(after_content) > 1020:
+            after_content = after_content[:1020] + "..."
+        emb.add_field(name="✏️ Message Edited", value=after_content)
+        emb.add_field(
+            name="Original Content",
+            value=before_content,
+        )
+        await self.send_embed(emb)
+
+    @listen()
+    async def on_message_delete(self, event: MessageDelete):
+        emb = self.base_embed(event)
+        emb.color = BrandColors.YELLOW
+        emb.set_thumbnail(url=event.member.display_avatar.url)
+        emb.set_author(name=event.member.tag, icon_url=event.member.display_avatar.url)
+
+        content = event.message.content or "[Empty]"
+        if len(content) > 1020:
+            content = content[:1020] + "..."
+        emb.add_field(name="🗑️ Message Deleted", value=event.message.content)
+
+        if (count := len(event.message.embeds)) > 0:
+            emb.add_field(name="# Embeds", value=str(count))
+
+        if (count := len(event.message.attachments)) > 0:
+            emb.add_field(name="# Attachments", value=str(count))
+
         await self.send_embed(emb)
 
 

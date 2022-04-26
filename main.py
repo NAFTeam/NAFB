@@ -58,6 +58,25 @@ class Bot(Snake):
             await ctx.author.add_role(ping_id, "User requested to add role")
             return await ctx.send("The poll ping role has been added", ephemeral=True)
 
+    @slash_command(
+        name="satisfactory_ping",
+        description="Get mentioned for satisfactory related content",
+        scopes=[701347683591389185],
+    )
+    async def satisfactory_ping(self, ctx: InteractionContext):
+        await ctx.defer(ephemeral=True)
+        ping_id = 968418694285905930
+        if ctx.author.has_role(ping_id):
+            await ctx.author.remove_role(ping_id, "User requested to remove role")
+            return await ctx.send(
+                "The Satisfactory ping role has been removed", ephemeral=True
+            )
+        else:
+            await ctx.author.add_role(ping_id, "User requested to add role")
+            return await ctx.send(
+                "The Satisfactory ping role has been added", ephemeral=True
+            )
+
 
 bot = Bot()
 bot.g_id = 701347683591389185

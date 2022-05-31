@@ -20,7 +20,7 @@ class Pings(Extension):
                 981173285880475658, "Get notified about guild news"
             ),
             "polls": PingObject(
-                929787105134133269, "Get notified when a pollis posted"
+                929787105134133269, "Get notified when a poll is posted"
             ),
         }
 

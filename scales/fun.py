@@ -1,7 +1,7 @@
-from dis_snek import Scale, slash_command, InteractionContext, slash_option
+from naff import Extension, slash_command, InteractionContext, slash_option
 
 
-class Fun(Scale):
+class Fun(Extension):
     @slash_command(
         name="how_many", description="How many users have [text] in their name"
     )

@@ -1,10 +1,10 @@
 import asyncio
 from typing import Optional
 
-from dis_snek import Scale, GuildVoice, listen
-from dis_snek.api.events import VoiceStateUpdate
-from dis_snek.api.voice.audio import AudioVolume
-from dis_snek.client.utils import find
+from naff import Extension, GuildVoice, listen
+from naff.api.events import VoiceStateUpdate
+from naff.api.voice.audio import AudioVolume
+from naff.client.utils import find
 from yt_dlp import YoutubeDL
 
 ytdl = YoutubeDL(
@@ -54,7 +54,7 @@ class YTDLAudio(AudioVolume):
         return new_cls
 
 
-class Radio(Scale):
+class Radio(Extension):
     async def async_start(self):
         for guild in self.bot.guilds:
             if channel := find(

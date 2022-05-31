@@ -1,9 +1,9 @@
 import aiohttp
-from dis_snek.client.errors import CommandCheckFailure
-from dis_snek.models import (
-    Scale,
-    message_command,
-    MessageContext,
+from naff.client.errors import CommandCheckFailure
+from naff.models import (
+    Extension,
+    prefixed_command,
+    PrefixedContext,
     check,
     Context,
 )
@@ -23,10 +23,10 @@ def is_owner():
     return check
 
 
-class Admin(Scale):
-    @message_command()
+class Admin(Extension):
+    @prefixed_command()
     @check(is_owner())
-    async def set_avatar(self, ctx: MessageContext):
+    async def set_avatar(self, ctx: PrefixedContext):
         if not ctx.message.attachments:
             return await ctx.send(
                 "There was no image to use! Try using that command again with an image"

@@ -1,9 +1,9 @@
 import textwrap
 
-from dis_snek import (
-    message_command,
-    Scale,
-    MessageContext,
+from naff import (
+    prefixed_command,
+    Extension,
+    PrefixedContext,
     Button,
     ButtonStyles,
     InteractionContext,
@@ -15,14 +15,14 @@ from dis_snek import (
     ParagraphText,
     ModalContext,
 )
-from dis_snek.models.snek.application_commands import modal_callback
+from naff.models.naff.application_commands import modal_callback
 
-thread_channel_id = 901576539941007400
+thread_channel_id = 966264344121843782
 
 
-class Support(Scale):
-    @message_command()
-    async def init(self, ctx: MessageContext):
+class Support(Extension):
+    @prefixed_command()
+    async def init(self, ctx: PrefixedContext):
         if ctx.author.id == 174918559539920897:
             await ctx.message.delete()
             await ctx.send(

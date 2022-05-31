@@ -1,4 +1,4 @@
-dis_snek
+naff
 PyGithub
 aioredis
 orjson

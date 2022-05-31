@@ -2,15 +2,15 @@ import asyncio
 import logging
 from pathlib import Path
 
-import dis_snek
-from dis_snek import Snake, Intents, listen, slash_command, InteractionContext
+import naff
+from naff import Client, Intents, listen, slash_command, InteractionContext
 
 logging.basicConfig()
-cls_log = logging.getLogger(dis_snek.const.logger_name)
+cls_log = logging.getLogger(naff.const.logger_name)
 cls_log.setLevel(logging.DEBUG)
 
 
-class Bot(Snake):
+class Bot(Client):
     def __init__(self):
         super().__init__(
             intents=Intents.DEFAULT
@@ -82,15 +82,15 @@ bot = Bot()
 bot.g_id = 701347683591389185
 
 
-bot.grow_scale("scales.support")
-bot.grow_scale("scales.githubMessages")
-bot.grow_scale("scales.tictactoe")
-bot.grow_scale("scales.admin")
-bot.grow_scale("dis_snek.ext.debug_scale")
-bot.grow_scale("scales.tags")
-bot.grow_scale("scales.publish")
-bot.grow_scale("scales.logging")
-bot.grow_scale("scales.fun")
-bot.grow_scale("scales.radio")
+bot.load_extension("scales.support")
+bot.load_extension("scales.githubMessages")
+bot.load_extension("scales.tictactoe")
+bot.load_extension("scales.admin")
+bot.load_extension("naff.ext.debug_extension")
+bot.load_extension("scales.tags")
+bot.load_extension("scales.publish")
+bot.load_extension("scales.guild_logging")
+bot.load_extension("scales.fun")
+bot.load_extension("scales.radio")
 
 asyncio.run(bot.astart((Path(__file__).parent / "token.txt").read_text().strip()))

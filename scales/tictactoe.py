@@ -5,8 +5,8 @@ import math
 import random
 from typing import List
 
-from dis_snek import Scale
-from dis_snek.models import (
+from naff import Extension
+from naff.models import (
     ButtonStyles,
     Button,
     ComponentContext,
@@ -150,7 +150,7 @@ def min_max(test_board: list, depth: int, player: GameState):
 BoardTemplate = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
 
-class TicTacToe(Scale):
+class TicTacToe(Extension):
     @slash_command(
         name="tic_tac_toe",
         sub_cmd_name="start",

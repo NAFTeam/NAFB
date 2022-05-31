@@ -1,5 +1,5 @@
-from dis_snek import (
-    Scale,
+from naff import (
+    Extension,
     listen,
     Embed,
     BrandColors,
@@ -8,7 +8,7 @@ from dis_snek import (
     Role,
     Timestamp,
 )
-from dis_snek.api.events import (
+from naff.api.events import (
     MemberUpdate,
     MemberAdd,
     MemberRemove,
@@ -16,10 +16,10 @@ from dis_snek.api.events import (
     MessageUpdate,
     BaseEvent,
 )
-from dis_snek.ext.debug_scale import strf_delta
+from naff.ext.debug_extension import strf_delta
 
 
-class Logging(Scale):
+class Logging(Extension):
     ...
 
     @staticmethod
@@ -30,7 +30,7 @@ class Logging(Scale):
         return embed
 
     async def send_embed(self, embed: Embed) -> Message:
-        channel = await self.bot.fetch_channel(968256006645751808)
+        channel = await self.bot.fetch_channel(965904694826369075)
         return await channel.send(embeds=embed)
 
     @listen()

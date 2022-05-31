@@ -4,7 +4,7 @@ import logging
 import aioredis as aioredis
 import attr
 import orjson as orjson
-from dis_snek import (
+from naff import (
     MISSING,
     ModalContext,
     Modal,
@@ -14,9 +14,9 @@ from dis_snek import (
     Timestamp,
     BrandColors,
 )
-from dis_snek.client.utils import optional
-from dis_snek.models import (
-    Scale,
+from naff.client.utils import optional
+from naff.models import (
+    Extension,
     slash_command,
     OptionTypes,
     InteractionContext,
@@ -25,7 +25,7 @@ from dis_snek.models import (
     Snowflake_Type,
     to_snowflake,
 )
-from dis_snek.models.snek.application_commands import modal_callback
+from naff.models.naff.application_commands import modal_callback
 from thefuzz import fuzz, process
 
 log = logging.getLogger("rebecca")
@@ -53,7 +53,7 @@ class Tag:
     )
 
 
-class Tags(Scale):
+class Tags(Extension):
     def __init__(self, bot):
         self.tags = {}
         self.redis: aioredis.Redis = MISSING

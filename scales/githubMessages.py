@@ -6,8 +6,9 @@ from pathlib import Path
 
 import aiohttp
 import github.GithubException
-from dis_snek import (
-    Scale,
+from github import Github
+from naff import (
+    Extension,
     Message,
     Embed,
     MaterialColors,
@@ -17,14 +18,13 @@ from dis_snek import (
     component_callback,
     ComponentContext,
 )
-from github import Github
 
 snippet_regex = re.compile(
     r"github\.com/([\w\-_]+)/([\w\-_]+)/blob/([\w\-_]+)/([\w\-_/.]+)(#L[\d]+(-L[\d]+)?)?"
 )
 
 
-class GithubMessages(Scale):
+class GithubMessages(Extension):
     def __init__(self, bot):
         self.git = Github(
             (Path(__file__).parent.parent / "git_token.txt").read_text().strip()

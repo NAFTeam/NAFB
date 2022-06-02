@@ -17,7 +17,7 @@ from naff import (
 )
 from naff.models.naff.application_commands import modal_callback
 
-thread_channel_id = 966264344121843782
+thread_channel_id = 901576539941007400
 
 
 class Support(Extension):

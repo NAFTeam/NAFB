@@ -30,7 +30,7 @@ class Logging(Extension):
         return embed
 
     async def send_embed(self, embed: Embed) -> Message:
-        channel = await self.bot.fetch_channel(965904694826369075)
+        channel = await self.bot.fetch_channel(968256006645751808)
         return await channel.send(embeds=embed)
 
     @listen()

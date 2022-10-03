@@ -44,5 +44,6 @@ bot.load_extension("scales.guild_logging")
 bot.load_extension("scales.fun")
 bot.load_extension("scales.radio")
 bot.load_extension("scales.pings")
+bot.load_extension("scales.dev-playground")
 
 asyncio.run(bot.astart((Path(__file__).parent / "token.txt").read_text().strip()))

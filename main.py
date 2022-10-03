@@ -20,7 +20,6 @@ class Bot(Client):
             delete_unused_application_cmds=True,
             asyncio_debug=True,
             activity="with sneks",
-            debug_scope=870046872864165888,
             fetch_members=True,
         )
 

@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  nafb:
+    container_name: nafb
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./logs:/app/logs
+    restart:
+      always

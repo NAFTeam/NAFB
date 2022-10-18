@@ -37,12 +37,17 @@ bot.load_extension("scales.githubMessages")
 bot.load_extension("scales.tictactoe")
 bot.load_extension("scales.admin")
 bot.load_extension("naff.ext.debug_extension")
-bot.load_extension("scales.tags")
 bot.load_extension("scales.publish")
 bot.load_extension("scales.guild_logging")
 bot.load_extension("scales.fun")
-bot.load_extension("scales.radio")
 bot.load_extension("scales.pings")
 bot.load_extension("scales.dev-playground")
 
-asyncio.run(bot.astart((Path(__file__).parent / "token.txt").read_text().strip()))
+
+if __name__ == "__main__":
+    import os
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    token = os.getenv("TOKEN")
+    asyncio.run(bot.astart(token))

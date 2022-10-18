@@ -3,3 +3,4 @@ PyGithub
 aioredis
 orjson
 thefuzz
+python-dotenv

@@ -4,3 +4,4 @@ aioredis
 orjson
 thefuzz
 python-dotenv
+git+https://github.com/NAFTeam/Naff-Link.git

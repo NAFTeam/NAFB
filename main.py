@@ -45,6 +45,7 @@ bot.load_extension("scales.guild_logging")
 bot.load_extension("scales.fun")
 bot.load_extension("scales.pings")
 bot.load_extension("scales.dev-playground")
+bot.load_extension("scales.radio")
 
 
 if __name__ == "__main__":

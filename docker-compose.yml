@@ -10,3 +10,18 @@ services:
       - ./logs:/app/logs
     restart:
       always
+    networks:
+      - nafb
+
+  lavalink:
+    container_name: lavalink
+    image: fredboat/lavalink:latest
+    restart:
+      always
+    networks:
+      - nafb
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml:ro
+
+networks:
+  nafb:

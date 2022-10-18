@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 import textwrap
 import traceback
@@ -27,7 +28,7 @@ snippet_regex = re.compile(
 class GithubMessages(Extension):
     def __init__(self, bot):
         self.git = Github(
-            (Path(__file__).parent.parent / "git_token.txt").read_text().strip()
+            os.getenv("GITHUB_TOKEN"),
         )
         self.repo = self.git.get_repo("Discord-Snake-Pit/Dis-Snek")
 

@@ -1,9 +1,12 @@
 import asyncio
 import logging
-from pathlib import Path
+import os
 
 import naff
+from dotenv import load_dotenv
 from naff import Client, Intents, listen
+
+load_dotenv()
 
 logging.basicConfig()
 cls_log = logging.getLogger(naff.const.logger_name)
@@ -45,9 +48,6 @@ bot.load_extension("scales.dev-playground")
 
 
 if __name__ == "__main__":
-    import os
-    from dotenv import load_dotenv
 
-    load_dotenv()
     token = os.getenv("TOKEN")
     asyncio.run(bot.astart(token))
